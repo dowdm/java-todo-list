@@ -105,6 +105,13 @@ public class App {
         //get: delete a category and tasks it contains
         //  /categories/:id/delete
 
+        get("/categories/:id/tasks/delete", (request, response) -> {
+            int idOfCategory = Integer.parseInt(request.params("id"));
+            taskDao.deleteByCategoryId(idOfCategory);
+            response.redirect("/categories/" + idOfCategory);
+            return null;
+        }, new HandlebarsTemplateEngine());
+
         //get: delete an individual task
         get("/categories/:category_id/tasks/:task_id/delete", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
@@ -117,6 +124,8 @@ public class App {
         //get: show new task form
         get("/tasks/new", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
+            List<Category> allCategories = categoryDao.getAll();
+            model.put("categories", allCategories);
             return new ModelAndView(model, "task-form.hbs");
         }, new HandlebarsTemplateEngine());
 
@@ -138,7 +147,10 @@ public class App {
             Map<String, Object> model = new HashMap<>();
             int idOfTaskToFind = Integer.parseInt(req.params("task_id"));
             Task foundTask = taskDao.findById(idOfTaskToFind);
+            int idOfCategoryToFind = Integer.parseInt(req.params("category_id"));
+            Category foundCategory = categoryDao.findById(idOfCategoryToFind);
             model.put("task", foundTask);
+            model.put("category", foundCategory);
             return new ModelAndView(model, "task-detail.hbs");
         }, new HandlebarsTemplateEngine());
 

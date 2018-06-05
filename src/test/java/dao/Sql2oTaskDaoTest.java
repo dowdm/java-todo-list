@@ -102,4 +102,17 @@ public class Sql2oTaskDaoTest {
         taskDao.add(task);
         assertEquals(originalCatId, taskDao.findById(task.getId()).getCategoryId());
     }
+
+    @Test
+    public void taskDeletesByCategoryId() throws Exception {
+        Task task = setupNewTask();
+        Task task2 = new Task ("wash the car", 2);
+        taskDao.add(task);
+        taskDao.add(task2);
+        taskDao.deleteByCategoryId(2);
+        List<Task> allTasks = taskDao.getAll();
+        assertEquals(1, allTasks.size());
+        assertTrue(allTasks.contains(task));
+        assertFalse(allTasks.contains(task2));
+    }
 }

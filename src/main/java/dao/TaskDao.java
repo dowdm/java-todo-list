@@ -20,4 +20,5 @@ public interface TaskDao {
     // DELETE
      void deleteById(int id);
      void clearAllTasks();
+     void deleteByCategoryId(int categoryId);
 }
