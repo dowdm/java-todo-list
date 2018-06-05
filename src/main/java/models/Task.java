@@ -10,11 +10,13 @@ public class Task {
     private boolean completed;
     private LocalDateTime createdAt;
     private int id;
+    private int categoryId;
 
-    public Task(String description){
+    public Task(String description, int categoryId){
         this.description = description;
         this.completed = false;
         this.createdAt = LocalDateTime.now();
+        this.categoryId = categoryId;
     }
 
     public String getDescription() {
@@ -42,6 +44,15 @@ public class Task {
         this.id = id;
     }
 
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,12 +60,13 @@ public class Task {
         Task task = (Task) o;
         return completed == task.completed &&
                 id == task.id &&
+                categoryId == task.categoryId &&
                 Objects.equals(description, task.description);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(description, completed, id);
+        return Objects.hash(description, completed, id, categoryId);
     }
 }

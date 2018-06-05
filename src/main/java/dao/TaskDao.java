@@ -1,6 +1,7 @@
 package dao;
 
 import models.Task;
+import models.Category;
 import java.util.List;
 
 public interface TaskDao {
@@ -14,7 +15,7 @@ public interface TaskDao {
     Task findById(int id);
 
     // UPDATE
-     void update(int id, String content);
+     void update(int id, String content, int categoryId);
 
     // DELETE
      void deleteById(int id);

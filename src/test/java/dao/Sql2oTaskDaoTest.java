@@ -20,14 +20,18 @@ public class Sql2oTaskDaoTest {
         conn = sql2o.open(); //keep connection open through entire test so it does not get erased
     }
 
+    public Task setupNewTask(){
+        return new Task("mow the lawn", 1);
+    }
+
     @After
     public void tearDown() throws Exception {
         conn.close();
     }
 
     @Test
-    public void addingCourseSetsId() throws Exception {
-        Task task = new Task ("mow the lawn");
+    public void addingTaskSetsId() throws Exception {
+        Task task = setupNewTask();
         int originalTaskId = task.getId();
         taskDao.add(task);
         assertNotEquals(originalTaskId, task.getId()); //how does this work?
@@ -35,7 +39,7 @@ public class Sql2oTaskDaoTest {
 
     @Test
     public void existingTasksCanBeFoundById() throws Exception {
-        Task task = new Task ("mow the lawn");
+        Task task = setupNewTask();
         taskDao.add(task); //add to dao (takes care of saving)
         Task foundTask = taskDao.findById(task.getId()); //retrieve
         assertEquals(task, foundTask); //should be the same
@@ -49,8 +53,8 @@ public class Sql2oTaskDaoTest {
 
     @Test
     public void allTasksAreFound() throws Exception {
-        Task task = new Task ("mow the lawn");
-        Task task2 = new Task ("wash the car");
+        Task task = setupNewTask();
+        Task task2 = new Task ("wash the car", 2);
         taskDao.add(task);
         taskDao.add(task2);
         List<Task> allTasks = taskDao.getAll();
@@ -58,19 +62,19 @@ public class Sql2oTaskDaoTest {
     }
 
     @Test
-    public void taskIsUpdated() throws Exception {
-        Task task = new Task ("mow the lawn");
+    public void updateChangesTaskContent() throws Exception {
+        String initialDescription = "mow the lawn";
+        Task task = new Task (initialDescription, 1);
         taskDao.add(task);
-        int id = task.getId();
-        taskDao.update(id, "trim the hedge");
-        Task updatedTask = taskDao.findById(id);
-        assertEquals("trim the hedge", updatedTask.getDescription());
+        taskDao.update(task.getId(),"brush the cat", 1);
+        Task updatedTask = taskDao.findById(task.getId()); //why do I need to refind this?
+        assertNotEquals(initialDescription, updatedTask.getDescription());
     }
 
     @Test
     public void taskDeletesById() throws Exception {
-        Task task = new Task ("mow the lawn");
-        Task task2 = new Task ("wash the car");
+        Task task = setupNewTask();
+        Task task2 = new Task ("wash the car", 2);
         taskDao.add(task);
         taskDao.add(task2);
         taskDao.deleteById(2);
@@ -82,12 +86,20 @@ public class Sql2oTaskDaoTest {
 
     @Test
     public void allTasksAreDeleted() throws Exception {
-        Task task = new Task ("mow the lawn");
-        Task task2 = new Task ("wash the car");
+        Task task = setupNewTask();
+        Task task2 = new Task ("wash the car", 2);
         taskDao.add(task);
         taskDao.add(task2);
         taskDao.clearAllTasks();
         List<Task> allTasks = taskDao.getAll();
         assertEquals(0, allTasks.size());
+    }
+
+    @Test
+    public void categoryIdIsReturnedCorrectly() throws Exception {
+        Task task = setupNewTask();
+        int originalCatId = task.getCategoryId();
+        taskDao.add(task);
+        assertEquals(originalCatId, taskDao.findById(task.getId()).getCategoryId());
     }
 }
